@@ -36,7 +36,7 @@ RUN wget https://copr.fedorainfracloud.org/coprs/kylegospo/bazzite/repo/fedora-$
     sed -i 's@gpgcheck=1@gpgcheck=0@g' /etc/yum.repos.d/tailscale.repo
 
 RUN case "${IMAGE_FLAVOR}" in \
-        main|ally) \
+        main) \
              wget https://copr.fedorainfracloud.org/coprs/bieszczaders/kernel-cachyos/repo/fedora-$(rpm -E %fedora)/bieszczaders-kernel-cachyos-fedora-$(rpm -E %fedora).repo -O /etc/yum.repos.d/_copr_bieszczaders-kernel-cachyos-fedora.repo && \
              wget https://copr.fedorainfracloud.org/coprs/bieszczaders/kernel-cachyos-addons/repo/fedora-$(rpm -E %fedora)/bieszczaders-kernel-cachyos-addons-fedora-$(rpm -E %fedora).repo -O /etc/yum.repos.d/_copr_bieszczaders-kernel-cachyos-addons-fedora.repo && \
             rpm-ostree cliwrap install-to-root / && \
@@ -58,7 +58,7 @@ RUN rpm-ostree override remove \
         kernel-core \
         kernel-modules \
         kernel-modules-core \
-        kernel-modules-extra && \
+        kernel-modules-extra
 
 # Install new packages
 RUN rpm-ostree install \
