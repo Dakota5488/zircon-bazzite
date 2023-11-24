@@ -41,12 +41,12 @@ RUN rpm-ostree override remove \
         ublue-os-update-services \
         firefox \
         firefox-langpacks \
-        htop
-#         kernel \
-#         kernel-core \
-#         kernel-modules \
-#         kernel-modules-core \
-#         kernel-modules-extra
+        htop \
+        kernel \
+        kernel-core \
+        kernel-modules \
+        kernel-modules-core \
+        kernel-modules-extra
 
 # Install new packages
 RUN rpm-ostree install \
@@ -87,7 +87,7 @@ RUN rpm-ostree install \
         lato-fonts \
         fira-code-fonts \
         glow \
-        #kernel-cachyos-rt \
+        kernel-cachyos-rt \
         gum && \
     ln -s /usr/share/fonts/google-noto-sans-cjk-fonts /usr/share/fonts/noto-cjk && \
     wget https://raw.githubusercontent.com/scaronni/steam-proton-mf-wmv/master/installcab.py -O /usr/bin/installcab && \
@@ -259,7 +259,7 @@ RUN if grep -qv "nvidia" <<< "${IMAGE_NAME}"; then \
 # Cleanup & Finalize
 COPY system_files/shared /
 RUN /tmp/image-info.sh && \
-#     sed -i 's@/usr/bin/steam@/usr/bin/bazzite-steam@g' /usr/share/applications/steam.desktop && \
+    sed -i 's@/usr/bin/steam@/usr/bin/bazzite-steam@g' /usr/share/applications/steam.desktop && \
     rm /usr/share/applications/shredder.desktop && \
     rm /usr/share/vulkan/icd.d/lvp_icd.*.json && \
     mkdir -p "/usr/etc/profile.d/" && \
