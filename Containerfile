@@ -41,12 +41,12 @@ RUN rpm-ostree override remove \
         ublue-os-update-services \
         firefox \
         firefox-langpacks \
-        htop \
-        kernel \
-        kernel-core \
-        kernel-modules \
-        kernel-modules-core \
-        kernel-modules-extra
+        htop
+#         kernel \
+#         kernel-core \
+#         kernel-modules \
+#         kernel-modules-core \
+#         kernel-modules-extra
 
 # Install new packages
 RUN rpm-ostree install \
@@ -87,7 +87,7 @@ RUN rpm-ostree install \
         lato-fonts \
         fira-code-fonts \
         glow \
-        kernel-cachyos-rt \
+        #kernel-cachyos-rt \
         gum && \
     ln -s /usr/share/fonts/google-noto-sans-cjk-fonts /usr/share/fonts/noto-cjk && \
     wget https://raw.githubusercontent.com/scaronni/steam-proton-mf-wmv/master/installcab.py -O /usr/bin/installcab && \
@@ -97,76 +97,76 @@ RUN rpm-ostree install \
     wget https://gitlab.com/popsulfr/steamos-btrfs/-/raw/main/files/usr/lib/systemd/system/btrfs-dedup@.service -O /usr/lib/systemd/system/btrfs-dedup@.service && \
     wget https://gitlab.com/popsulfr/steamos-btrfs/-/raw/main/files/usr/lib/systemd/system/btrfs-dedup@.timer -O /usr/lib/systemd/system/btrfs-dedup@.timer
 
-# Install Steam & Lutris, plus supporting packages
-# RUN rpm-ostree install \
-#         vulkan-loader.i686 \
-#         alsa-lib.i686 \
-#         fontconfig.i686 \
-#         gtk2.i686 \
-#         libICE.i686 \
-#         libnsl.i686 \
-#         libxcrypt-compat.i686 \
-#         libpng12.i686 \
-#         libXext.i686 \
-#         libXinerama.i686 \
-#         libXtst.i686 \
-#         libXScrnSaver.i686 \
-#         NetworkManager-libnm.i686 \
-#         nss.i686 \
-#         pulseaudio-libs.i686 \
-#         libcurl.i686 \
-#         systemd-libs.i686 \
-#         libva.i686 \
-#         libvdpau.i686 \
-#         libdbusmenu-gtk3.i686 \
-#         libatomic.i686 \
-#         pipewire-alsa.i686 \
-#         clinfo && \
-#     sed -i '0,/enabled=0/s//enabled=1/' /etc/yum.repos.d/rpmfusion-nonfree-steam.repo && \
-#     sed -i '0,/enabled=1/s//enabled=0/' /etc/yum.repos.d/rpmfusion-nonfree.repo && \
-#     sed -i '0,/enabled=1/s//enabled=0/' /etc/yum.repos.d/rpmfusion-nonfree-updates.repo && \
-#     sed -i '0,/enabled=1/s//enabled=0/' /etc/yum.repos.d/fedora-updates.repo && \
-#     rpm-ostree install \
-#         steam && \
-#     sed -i '0,/enabled=1/s//enabled=0/' /etc/yum.repos.d/rpmfusion-nonfree-steam.repo && \
-#     sed -i '0,/enabled=0/s//enabled=1/' /etc/yum.repos.d/rpmfusion-nonfree.repo && \
-#     sed -i '0,/enabled=0/s//enabled=1/' /etc/yum.repos.d/rpmfusion-nonfree-updates.repo && \
-#     sed -i '0,/enabled=0/s//enabled=1/' /etc/yum.repos.d/fedora-updates.repo && \
-#     rpm-ostree install \
-#         lutris \
-#         wxGTK \
-#         libFAudio \
-#         wine-core.x86_64 \
-#         wine-core.i686 \
-#         wine-pulseaudio.x86_64 \
-#         wine-pulseaudio.i686 \
-#         winetricks \
-#         protontricks \
-#         latencyflex-vulkan-layer \
-#         vkBasalt.x86_64 \
-#         vkBasalt.i686 \
-#         mangohud.x86_64 \
-#         mangohud.i686 \
-#         vk_hdr_layer.x86_64 \
-#         vk_hdr_layer.i686 \
-#         gperftools-libs.i686 \
-#         goverlay && \
-#     if [[ ! "${IMAGE_FLAVOR}" =~ "surface" ]]; then \
-#         rpm-ostree install \
-#             obs-vkcapture.x86_64 \
-#             obs-vkcapture.i686 \
-#     ; fi && \
-#     ln -s /usr/bin/wine64 /usr/bin/wine && \
-#     wget $(curl https://api.github.com/repos/ishitatsuyuki/LatencyFleX/releases/latest | jq -r '.assets[] | select(.name| test(".*.tar.xz$")).browser_download_url') -O /tmp/latencyflex.tar.xz && \
-#     mkdir -p /tmp/latencyflex && \
-#     tar --strip-components 1 -xvf /tmp/latencyflex.tar.xz -C /tmp/latencyflex && \
-#     rm -f /tmp/latencyflex.tar.xz && \
-#     cp -r /tmp/latencyflex/wine/usr/lib/wine/* /usr/lib64/wine/ && \
-#     rm -rf /tmp/latencyflex && \
-#     wget https://raw.githubusercontent.com/Shringe/LatencyFleX-Installer/main/install.sh -O /usr/bin/latencyflex && \
-#     sed -i 's@/usr/lib/wine/@/usr/lib64/wine/@g' /usr/bin/latencyflex && \
-#     sed -i 's@"dxvk.conf"@"/usr/share/latencyflex/dxvk.conf"@g' /usr/bin/latencyflex && \
-#     chmod +x /usr/bin/latencyflex
+Install Steam & Lutris, plus supporting packages
+RUN rpm-ostree install \
+        vulkan-loader.i686 \
+        alsa-lib.i686 \
+        fontconfig.i686 \
+        gtk2.i686 \
+        libICE.i686 \
+        libnsl.i686 \
+        libxcrypt-compat.i686 \
+        libpng12.i686 \
+        libXext.i686 \
+        libXinerama.i686 \
+        libXtst.i686 \
+        libXScrnSaver.i686 \
+        NetworkManager-libnm.i686 \
+        nss.i686 \
+        pulseaudio-libs.i686 \
+        libcurl.i686 \
+        systemd-libs.i686 \
+        libva.i686 \
+        libvdpau.i686 \
+        libdbusmenu-gtk3.i686 \
+        libatomic.i686 \
+        pipewire-alsa.i686 \
+        clinfo && \
+    sed -i '0,/enabled=0/s//enabled=1/' /etc/yum.repos.d/rpmfusion-nonfree-steam.repo && \
+    sed -i '0,/enabled=1/s//enabled=0/' /etc/yum.repos.d/rpmfusion-nonfree.repo && \
+    sed -i '0,/enabled=1/s//enabled=0/' /etc/yum.repos.d/rpmfusion-nonfree-updates.repo && \
+    sed -i '0,/enabled=1/s//enabled=0/' /etc/yum.repos.d/fedora-updates.repo && \
+    rpm-ostree install \
+        steam && \
+    sed -i '0,/enabled=1/s//enabled=0/' /etc/yum.repos.d/rpmfusion-nonfree-steam.repo && \
+    sed -i '0,/enabled=0/s//enabled=1/' /etc/yum.repos.d/rpmfusion-nonfree.repo && \
+    sed -i '0,/enabled=0/s//enabled=1/' /etc/yum.repos.d/rpmfusion-nonfree-updates.repo && \
+    sed -i '0,/enabled=0/s//enabled=1/' /etc/yum.repos.d/fedora-updates.repo && \
+    rpm-ostree install \
+        lutris \
+        wxGTK \
+        libFAudio \
+        wine-core.x86_64 \
+        wine-core.i686 \
+        wine-pulseaudio.x86_64 \
+        wine-pulseaudio.i686 \
+        winetricks \
+        protontricks \
+        latencyflex-vulkan-layer \
+        vkBasalt.x86_64 \
+        vkBasalt.i686 \
+        mangohud.x86_64 \
+        mangohud.i686 \
+        vk_hdr_layer.x86_64 \
+        vk_hdr_layer.i686 \
+        gperftools-libs.i686 \
+        goverlay && \
+    if [[ ! "${IMAGE_FLAVOR}" =~ "surface" ]]; then \
+        rpm-ostree install \
+            obs-vkcapture.x86_64 \
+            obs-vkcapture.i686 \
+    ; fi && \
+    ln -s /usr/bin/wine64 /usr/bin/wine && \
+    wget $(curl https://api.github.com/repos/ishitatsuyuki/LatencyFleX/releases/latest | jq -r '.assets[] | select(.name| test(".*.tar.xz$")).browser_download_url') -O /tmp/latencyflex.tar.xz && \
+    mkdir -p /tmp/latencyflex && \
+    tar --strip-components 1 -xvf /tmp/latencyflex.tar.xz -C /tmp/latencyflex && \
+    rm -f /tmp/latencyflex.tar.xz && \
+    cp -r /tmp/latencyflex/wine/usr/lib/wine/* /usr/lib64/wine/ && \
+    rm -rf /tmp/latencyflex && \
+    wget https://raw.githubusercontent.com/Shringe/LatencyFleX-Installer/main/install.sh -O /usr/bin/latencyflex && \
+    sed -i 's@/usr/lib/wine/@/usr/lib64/wine/@g' /usr/bin/latencyflex && \
+    sed -i 's@"dxvk.conf"@"/usr/share/latencyflex/dxvk.conf"@g' /usr/bin/latencyflex && \
+    chmod +x /usr/bin/latencyflex
 
 # Configure KDE & GNOME
 RUN if grep -q "kinoite" <<< "${BASE_IMAGE_NAME}"; then \
@@ -370,6 +370,8 @@ RUN if grep -q "kinoite" <<< "${BASE_IMAGE_NAME}"; then \
     rm -f /usr/share/gnome-shell/extensions/logomenu@aryan_k/schemas/gschemas.compiled && \
     glib-compile-schemas /usr/share/gnome-shell/extensions/logomenu@aryan_k/schemas/ \
 ; fi
+
+RUN flatpak install com.valvesoftware.Steam
 
 # Install new packages
 # Dock updater - done manually due to proprietary parts preventing it from being on Copr
