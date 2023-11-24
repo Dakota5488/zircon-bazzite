@@ -38,12 +38,13 @@ RUN wget https://copr.fedorainfracloud.org/coprs/kylegospo/bazzite/repo/fedora-$
 RUN case "${IMAGE_FLAVOR}" in \
         main|ally) \
              wget https://copr.fedorainfracloud.org/coprs/bieszczaders/kernel-cachyos/repo/fedora-$(rpm -E %fedora)/bieszczaders-kernel-cachyos-fedora-$(rpm -E %fedora).repo -O /etc/yum.repos.d/_copr_bieszczaders-kernel-cachyos-fedora.repo && \
+             wget https://copr.fedorainfracloud.org/coprs/bieszczaders/kernel-cachyos-addons/repo/fedora-$(rpm -E %fedora)/bieszczaders-kernel-cachyos-addons-fedora-$(rpm -E %fedora).repo -O /etc/yum.repos.d/_copr_bieszczaders-kernel-cachyos-addons-fedora.repo && \
             rpm-ostree cliwrap install-to-root / && \
             rpm-ostree install \
-            #--experimental \
-            --from repo=copr:copr.fedorainfracloud.org:sentry:kernel-cachyoss \
                     kernel-cachyos-rt \
-                    kernel-cachyos-modules \
+                    kernel-cachyos-rt-modules \
+                    kernel-cachyos-rt-devel \
+                    uksmd-rawhide \
             ;; \
     esac
 
@@ -57,7 +58,7 @@ RUN rpm-ostree override remove \
         kernel-core \
         kernel-modules \
         kernel-modules-core \
-        kernel-modules-extra
+        kernel-modules-extra && \
 
 # Install new packages
 RUN rpm-ostree install \
