@@ -97,7 +97,7 @@ RUN rpm-ostree install \
     wget https://gitlab.com/popsulfr/steamos-btrfs/-/raw/main/files/usr/lib/systemd/system/btrfs-dedup@.service -O /usr/lib/systemd/system/btrfs-dedup@.service && \
     wget https://gitlab.com/popsulfr/steamos-btrfs/-/raw/main/files/usr/lib/systemd/system/btrfs-dedup@.timer -O /usr/lib/systemd/system/btrfs-dedup@.timer
 
-Install Steam & Lutris, plus supporting packages
+#Install Steam & Lutris, plus supporting packages
 RUN rpm-ostree install \
         vulkan-loader.i686 \
         alsa-lib.i686 \
