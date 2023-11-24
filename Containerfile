@@ -115,7 +115,7 @@ RUN rpm-ostree install \
         fontconfig.i686 \
         gtk2.i686 \
         libICE.i686 \
-        libnsl.i686 \
+        #libnsl.i686 \
         libxcrypt-compat.i686 \
         libpng12.i686 \
         libXext.i686 \
