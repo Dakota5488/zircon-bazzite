@@ -40,7 +40,7 @@ RUN case "${IMAGE_FLAVOR}" in \
              wget https://copr.fedorainfracloud.org/coprs/bieszczaders/kernel-cachyos/repo/fedora-$(rpm -E %fedora)/bieszczaders-kernel-cachyos-fedora-$(rpm -E %fedora).repo -O /etc/yum.repos.d/_copr_bieszczaders-kernel-cachyos-fedora.repo && \
             rpm-ostree cliwrap install-to-root / && \
             rpm-ostree install \
-            --experimental \
+            #--experimental \
             --from repo=copr:copr.fedorainfracloud.org:sentry:kernel-cachyoss \
                     kernel-cachyos-rt \
                     kernel-cachyos-modules \
