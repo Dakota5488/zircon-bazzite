@@ -5,8 +5,8 @@
 %endif
 
 Name:    bluez
-Version: 5.70
-Release: 1%{?dist}.bazzite.{{{ git_dir_version }}}
+Version: 5.72
+Release: 3%{?dist}.bazzite.{{{ git_dir_version }}}
 Summary: Bluetooth utilities
 License: GPLv2+
 URL:     https://www.bluez.org/
@@ -14,14 +14,18 @@ URL:     https://www.bluez.org/
 Source0: https://www.kernel.org/pub/linux/bluetooth/%{name}-%{version}.tar.xz
 Source1: bluez.gitignore
 
-# https://github.com/hadess/bluez/commits/obex-5.46
-# Upstream's logic has changed so needs a rebase
-#Patch1: 0001-obex-Use-GLib-helper-function-to-manipulate-paths.patch
 # https://lore.kernel.org/linux-bluetooth/20220901110719.176944-1-hadess@hadess.net/T/#m9c08d004cd5422783ee1d93154f42303bba9169f
 Patch2: power-state-adapter-property.patch
-# https://github.com/bluez/bluez/issues/614
-# https://github.com/bluez/bluez/commit/3a9c637010f8dc1ba3e8382abe01065761d4f5bb
-Patch3: controllers.patch
+
+# Valve
+Patch3: AVRCP_TG_MDI_BV-04-C.patch
+Patch4: 0001-valve-bluetooth-config.patch
+Patch5: 0002-valve-bluetooth-phy.patch
+Patch6: 0006-shared-gatt-Prevent-security-level-change-for-PTS-GA.patch
+Patch7: 0007-btgatt-client-Add-command-to-prevent-security-level-.patch
+Patch8: 0008-btgatt-client-Add-function-to-search-service-based-o.patch
+Patch9: 0009-btgatt-client-Add-function-to-search-characteristics.patch
+Patch10: 0010-btgatt-client-Add-function-to-search-all-primary-ser.patch
 
 BuildRequires: dbus-devel >= 1.6
 BuildRequires: glib2-devel
@@ -41,6 +45,7 @@ BuildRequires: cups-devel
 BuildRequires: libtool automake autoconf
 # For man pages
 BuildRequires: python3-docutils
+BuildRequires: python3-pygments
 
 Requires: dbus >= 1.6
 Requires(post): systemd
@@ -156,6 +161,8 @@ autoreconf -vif
 %endif
            --enable-sixaxis --enable-cups --enable-nfc --enable-mesh \
            --enable-hid2hci --enable-testing --enable-experimental \
+           --enable-bap --enable-bass --enable-mcp --enable-micp \
+           --enable-csip --enable-vcp \
            --with-systemdsystemunitdir=%{_unitdir} \
            --with-systemduserunitdir=%{_userunitdir}
 
@@ -199,6 +206,9 @@ mkdir -p $RPM_BUILD_ROOT/%{_libdir}/bluetooth/
 #copy bluetooth config file and setup auto enable
 install -D -p -m0644 src/main.conf ${RPM_BUILD_ROOT}/etc/bluetooth/main.conf
 install -D -p -m0644 mesh/mesh-main.conf ${RPM_BUILD_ROOT}/etc/bluetooth/mesh-main.conf
+install -D -p -m0644 profiles/input/input.conf ${RPM_BUILD_ROOT}/etc/bluetooth/input.conf
+install -D -p -m0644 profiles/network/network.conf ${RPM_BUILD_ROOT}/etc/bluetooth/network.conf
+
 sed -i 's/#\[Policy\]$/\[Policy\]/; s/#AutoEnable=false/AutoEnable=true/' ${RPM_BUILD_ROOT}/%{_sysconfdir}/bluetooth/main.conf
 
 # Install the HCI emulator, useful for testing
@@ -236,8 +246,12 @@ install emulator/btvirt ${RPM_BUILD_ROOT}/%{_libexecdir}/bluetooth/
 %files
 %license COPYING
 %doc AUTHORS ChangeLog
-%dir %{_sysconfdir}/bluetooth
+# bluetooth.service expects configuraton directory to be read only
+# https://github.com/bluez/bluez/issues/329#issuecomment-1102459104
+%attr(0555, root, root) %dir %{_sysconfdir}/bluetooth
 %config(noreplace) %{_sysconfdir}/bluetooth/main.conf
+%config(noreplace) %{_sysconfdir}/bluetooth/input.conf
+%config(noreplace) %{_sysconfdir}/bluetooth/network.conf
 %{_bindir}/avinfo
 %{_bindir}/bluemoon
 %{_bindir}/bluetoothctl
@@ -246,21 +260,20 @@ install emulator/btvirt ${RPM_BUILD_ROOT}/%{_libexecdir}/bluetooth/
 %{_bindir}/btmon
 %{_bindir}/hex2hcd
 %{_bindir}/l2ping
-%{_bindir}/l2test
 %{_bindir}/mpris-proxy
-%{_bindir}/rctest
-%{_mandir}/man1/bluetoothctl-mgmt.1.*
-%{_mandir}/man1/bluetoothctl-monitor.1.*
+%{_mandir}/man1/bluetoothctl.1.*
+%{_mandir}/man1/bluetoothctl-*.1.*
 %{_mandir}/man1/btmgmt.1.*
 %{_mandir}/man1/btattach.1.*
 %{_mandir}/man1/btmon.1.*
 %{_mandir}/man1/l2ping.1.*
-%{_mandir}/man1/rctest.1.*
 %{_mandir}/man8/bluetoothd.8.*
 %dir %{_libexecdir}/bluetooth
 %{_libexecdir}/bluetooth/bluetoothd
 %{_libdir}/bluetooth/
-%{_localstatedir}/lib/bluetooth
+# bluetooth.service expects StateDirectoryMode to be 700.
+%attr(0700, root, root) %dir %{_localstatedir}/lib/bluetooth
+%dir %{_localstatedir}/lib/bluetooth/mesh
 %{_datadir}/dbus-1/system.d/bluetooth.conf
 %{_datadir}/dbus-1/system-services/org.bluez.service
 %{_unitdir}/bluetooth.service
@@ -294,7 +307,11 @@ install emulator/btvirt ${RPM_BUILD_ROOT}/%{_libexecdir}/bluetooth/
 %files libs-devel
 %doc doc/*txt
 %{_bindir}/isotest
+%{_bindir}/l2test
+%{_bindir}/rctest
 %{_mandir}/man1/isotest.1.*
+%{_mandir}/man1/rctest.1.*
+%{_mandir}/man5/org.bluez.*.5.*
 %{_libdir}/libbluetooth.so
 %{_includedir}/bluetooth
 %{_libdir}/pkgconfig/bluez.pc
@@ -326,6 +343,39 @@ install emulator/btvirt ${RPM_BUILD_ROOT}/%{_libexecdir}/bluetooth/
 %{_userunitdir}/obex.service
 
 %changelog
+* Tue Jan 23 2024 Fedora Release Engineering <releng@fedoraproject.org> - 5.72-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_40_Mass_Rebuild
+
+* Fri Jan 19 2024 Fedora Release Engineering <releng@fedoraproject.org> - 5.72-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_40_Mass_Rebuild
+
+* Sun Jan 14 2024 Peter Robinson <pbrobinson@fedoraproject.org> - 5.72-1
+- Update to 5.72
+
+* Sun Jan 07 2024 Peter Robinson <pbrobinson@fedoraproject.org> - 5.71-3
+- Upstream fix for crash on A2DP audio suspend
+
+* Fri Dec 29 2023 Peter Robinson <pbrobinson@fedoraproject.org> - 5.71-2
+- Fix link key address type for old kernels
+
+* Sat Dec 16 2023 Peter Robinson <pbrobinson@fedoraproject.org> - 5.71-1
+- Update to 5.71
+
+* Thu Dec 07 2023 Peter Robinson <pbrobinson@fedoraproject.org> - 5.70-5
+- Install default input.conf/network.conf
+
+* Thu Dec 07 2023 Peter Robinson <pbrobinson@fedoraproject.org> - 5.70-4
+- Add mitigation for CVE-2023-45866
+
+* Sun Nov 19 2023 Peter Robinson <pbrobinson@fedoraproject.org> - 5.70-3
+- Fix some input devices disconnecting right after connecting
+- Explicitly enable Bluetooth BAP/BASS/CSIP/MCP/MICP/VCP profiles
+
+* Mon Oct 02 2023 Sandro Bonazzola <sbonazzo@redhat.com> - 5.70-2
+- Fix access modes for /etc/bluetooth and /var/lib/bluetooth as expected
+  by bluetooth.service.
+- Resolves: fedora#2144504
+
 * Fri Sep 29 2023 Peter Robinson <pbrobinson@fedoraproject.org> - 5.70-1
 - Update to 5.70
 - Enable some Bluetooth LE features
