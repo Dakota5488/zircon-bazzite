@@ -252,8 +252,7 @@ RUN rpm-ostree override remove \
         pipewire-jack-audio-connection-kit-libs \
         pipewire-libs \
         pipewire-pulseaudio \
-        pipewire-utils \
-        xorg-x11-server-Xwayland && \
+        pipewire-utils && \
     rpm-ostree install \
         mesa-va-drivers-freeworld \
         mesa-vdpau-drivers-freeworld.x86_64 && \
@@ -280,7 +279,6 @@ RUN rpm-ostree override remove \
 
 # Install new packages
 RUN rpm-ostree install \
-        clevis-dracut \
         discover-overlay \
         python3-pip \
         libadwaita \
