@@ -2,7 +2,7 @@
 
 %global _default_patch_fuzz 2
 %global build_timestamp %(date +"%Y%m%d")
-%global gamescope_tag 3.14.13
+%global gamescope_tag 3.14.14
 
 Name:           gamescope
 Version:        100.%{gamescope_tag}
@@ -20,8 +20,7 @@ Patch1:         720p.patch
 Patch2:         disable-steam-touch-click-atom.patch
 Patch3:         external-rotation.patch
 Patch4:         panel-type.patch
-Patch5:         gestures.patch
-Patch6:         deckhd.patch
+Patch5:         deckhd.patch
 
 BuildRequires:  meson >= 0.54.0
 BuildRequires:  ninja-build
